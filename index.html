@@ -107,6 +107,53 @@ canvas.trace{position:absolute;inset:0;width:100%;height:100%;touch-action:none;
 .welcome{text-align:center;padding:18px 22px}
 .welcome h2{margin:0 0 4px}
 .welcome p{margin:0;font-size:19px}
+
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:6px 0;direction:ltr}
+.word{background:#f6fbff;border:3px solid #e6e1f7;border-radius:20px;padding:12px;text-align:center;cursor:pointer;transition:transform .15s}
+.word:hover{transform:translateY(-3px)}
+.word .e{display:block;font-size:44px;line-height:1.2}
+.word b{display:block;font-size:20px}
+.word small{display:block;font-size:14px;color:#55607a}
+.sent{display:flex;justify-content:space-between;align-items:center;background:#f6fbff;border-radius:16px;padding:10px 14px;margin:8px 0;cursor:pointer;gap:10px;direction:ltr}
+.sent .ltr{font-size:20px}
+.say{background:#fff;border-radius:999px;padding:2px 12px;border:2px solid var(--sky);font-weight:700}
+.engl{direction:ltr;text-align:left;font-size:21px;line-height:1.9}
+
+/* responsive pass */
+.app{padding:12px 12px 56px}
+.card{padding:clamp(14px,3vw,22px) clamp(14px,3vw,24px)}
+.card h2,h2{font-size:clamp(24px,4vw,32px)}
+.words{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))!important;gap:clamp(8px,2vw,12px)}
+.word{padding:clamp(8px,2vw,12px)}
+.word .e{font-size:clamp(30px,6vw,44px)}
+.word b{font-size:clamp(16px,3.5vw,20px)}
+.steps{display:grid;grid-template-columns:repeat(4,auto);gap:6px}
+.steps span{padding:4px 10px;font-size:clamp(13px,3vw,16px);text-align:center}
+.hdr{flex-wrap:wrap;justify-content:center}
+.hdr .mid{order:3;flex-basis:100%}
+.hdr .mid b{font-size:clamp(20px,5vw,26px)}
+.hdr .mid span{font-size:clamp(12px,3vw,15px)}
+.hdr img{height:clamp(44px,10vw,64px)!important}
+.hud{gap:8px}
+.pill{font-size:clamp(14px,3.6vw,17px);padding:6px 12px}
+.btn{font-size:clamp(15px,4vw,19px);padding:10px 16px}
+.engl{font-size:clamp(16px,4vw,21px)}
+.sent{font-size:clamp(15px,3.8vw,19px)}
+.sent .ltr{font-size:clamp(15px,3.8vw,20px)}
+.trail{height:clamp(300px,62vw,380px)!important}
+.station{width:clamp(96px,26vw,150px)!important}
+.bub{width:clamp(74px,19vw,112px)!important;height:clamp(74px,19vw,112px)!important;font-size:clamp(28px,7vw,44px)}
+.lbl{font-size:clamp(13px,3.4vw,18px)}
+.stars{font-size:clamp(14px,3.6vw,20px)}
+.opt{font-size:clamp(15px,4vw,19px)}
+.q p{font-size:clamp(16px,4vw,21px)}
+.stage-hidden{display:none}
+@media (max-width:640px){
+  .sunny,.cloud{display:none}
+  .card{border-radius:22px}
+  .sent{flex-wrap:wrap}
+  .opt{padding:8px 10px}
+}
 </style>
 </head>
 <body>
@@ -129,16 +176,37 @@ const COL={sky:'#5bc0eb',sun:'#ffd23f',grass:'#6cc551',flower:'#ff5d7a',butterfl
 const PAL=[['#5bc0eb','blue'],['#ffd23f','yellow'],['#6cc551','green'],['#ff5d7a','red'],['#b07cff','purple']];
 const LESSONS=[
  {id:'l1',n:1,ico:'🌻',bg:'#6cc551',title:'In the Garden',goal:'Describe the garden with colours: "The grass is green."',
+ expl:[
+   {h:'🔤 New words — tap to hear',items:[['sky','☁️','the blue part above us'],['sun','☀️','it is bright and yellow'],['bird','🐦','it can fly and sing'],['butterfly','🦋','it has colourful wings'],['tree','🌳','it is big and has leaves'],['grass','🌿','it grows on the ground'],['flower','🌼','it smells nice']]},
+   {h:'🎨 Colours in nature',items:[['sky','blue'],['sun','yellow'],['grass','green'],['flower','red'],['butterfly','purple']]},
+   {h:'✏️ Sentence pattern',text:'We use: <b>The ___ is ___.</b><br>Example: <span class="ltr">The grass is green.</span>'},
+   {h:'💬 Useful sentences',sents:['I can see a tree.','The butterfly is flying.','The sky is blue.']}
+ ],
   pre:[['What colour is the grass?',['green','red','blue'],0],['What colour is the sky?',['yellow','blue','pink'],1],['What can you see in the tree?',['a bird','a bag','a desk'],0]],
   sents:['The grass is green.','The sky is blue.','The sun is yellow.','The flower is red.','The butterfly is flying.','I can see a tree.'],
   quiz:[['The sun is ___.',['yellow','blue','red'],0],['Look! I can see a ___.',['bird','chair','book'],0],['The flower is ___.',['red','green','black'],0]]},
  {id:'l2',n:2,ico:'🦋',bg:'#ffd23f',title:"What's This?",goal:'Ask and answer "What\'s this?" and "This is a…".',
+ expl:[
+   {h:'🔤 New words — tap to hear',items:[['bird','🐦','a small animal with wings'],['butterfly','🦋','it flies'],['tree','🌳','it is tall'],['flower','🌼','it is pretty']]},
+   {h:'❓ Asking: What\'s this?',text:'Use <b>What\'s this?</b> to ask about a thing you see.<br>Answer with: <b>This is a ___.</b>'},
+   {h:'💬 Example',sents:["I can see a bird. What's this?","This is a butterfly.","This is a flower."]}
+ ],
   pre:[['Which question asks about a thing?',["What's this?",'Who are you?','Where is it?'],0],['Complete: "This is a ___." (bird)',['bird','green','big'],0],['Which sentence starts with "I can see"?',['I can see a tree.','The tree is big.','Look!'],0]],
   quiz:[["Ask: ___ this?",["What's",'Who','Where'],0],['I can see a flower. ___ this?',["What's",'Hello','Goodbye'],0],['This ___ a butterfly.',['is','are','am'],0]]},
  {id:'l3',n:3,ico:'🔷',bg:'#ff7aa2',title:'Shapes & Colours',goal:'Name and sort the basic shapes.',
+ expl:[
+   {h:'🔷 Shapes',items:[['square','■','4 equal sides, 4 corners'],['circle','●','no sides, no corners'],['triangle','▲','3 sides, 3 corners'],['rectangle','▭','4 sides: 2 long, 2 short']]},
+   {h:'✏️ Sentence pattern',text:'What shape is this? <b>This is a circle.</b><br>The triangle has <b>3 sides</b>.'},
+   {h:'💬 Useful sentences',sents:['What shape is this? This is a circle.','The triangle has 3 sides.','There is 1 yellow rectangle.']}
+ ],
   pre:[['How many sides does a triangle have?',['2','3','4'],1],['What shape is a ball?',['square','circle','triangle'],1],['What colour is the sun?',['yellow','blue','red'],0]],
   quiz:[['A square has ___ equal sides.',['4','3','2'],0],['Which shape has no corners?',['circle','square','triangle'],0],['The triangle has ___ sides.',['3','4','1'],0]]},
  {id:'l4',n:4,ico:'🔤',bg:'#7dd3fc',title:'Phonics: Aa & Ss',goal:'Trace the letters and sort words by their first sound.',
+ expl:[
+   {h:'🔤 Letters',letters:[['Aa','a'],['Ss','s']]},
+   {h:'🔊 Words that start with "a"',items:[['ant','🐜','a'],['apple','🍎','a'],['arm','💪','a'],['arrow','🏹','a'],['axe','🪓','a']]},
+   {h:'🔊 Words that start with "s"',items:[['sun','☀️','s'],['snake','🐍','s'],['spider','🕷️','s']]}
+ ],
   pre:[['Which word starts with "a"?',['sun','ant','snake'],1],['Which word starts with "s"?',['apple','snake','arm'],1],['Which picture is an apple?',['🍎','☀️','🐍'],0]],
   quiz:[['Which word starts with "a"?',['arm','sun','spider'],0],['Which word starts with "s"?',['apple','spider','ant'],1],['Write the letter: "Aa" is the letter ___.',['a','s','b'],0]]}
 ];
@@ -203,25 +271,39 @@ function home(){
 /* ---------- lesson with 3 stages ---------- */
 function lesson(L){
   const st=S.stage[L.id]||0;
-  const names=['Pre-test','Play','Quiz'];
-  const steps=names.map((n,i)=>`<span class="${i===st?'on':(i<st?'ok':'')}">${i+1}. ${n}</span>`).join('');
-  let body='';
-  if(st===0) body=preHTML(L);
-  else if(st===1) body=gameHTML(L);
-  else body=quizHTML(L);
-  const canNext = (st===0 && S.preDone[L.id]!==undefined) || (st===1 && S.gameDone[L.id]) || (st===2 && S.quizFin[L.id]);
-  const nextLabel = st<2 ? 'Next ➡' : (L.n<4?'Next lesson 🌱':'Unit test 🏆');
-  const nextTo = st<2 ? null : (L.n<4?'l'+(L.n+1):'exam');
+  const names=['Pre-test','Explain','Play','Quiz'];
+  const steps=names.map((n,i)=>`<span class="${i===st?'on':(i<st?'ok':'')}"><bdi>${i+1}. ${n}</bdi></span>`).join('');
+  const body=[preHTML(L),explHTML(L),gameHTML(L),quizHTML(L)][st];
+  const canNext = (st===0 && S.preDone[L.id]!==undefined) || st===1 || (st===2 && S.gameDone[L.id]) || (st===3 && S.quizFin[L.id]);
+  const nextLabel = st<3 ? (st===1?'Start playing 🎮':'Next ➡') : (L.n<4?'Next lesson 🌱':'Unit test 🏆');
+  const nextTo = st<3 ? null : (L.n<4?'l'+(L.n+1):'exam');
   $('main').innerHTML=`
-    <div class="card"><span class="chip">Lesson ${L.n}</span><h2>${L.title}</h2><p style="margin:4px 0"><b>Goal:</b> ${L.goal}</p>
+    <div class="card"><span class="chip">Lesson ${L.n}</span><h2>${L.title}</h2><p style="margin:4px 0"><b>Goal:</b> <bdi>${L.goal}</bdi></p>
       <div class="steps">${steps}</div></div>
     <div class="card" id="stage">${body}</div>
     <div style="text-align:center">
       ${st>0?`<button class="btn g" onclick="setStage('${L.id}',${st-1})">⬅ Back</button>`:''}
-      <button class="btn" ${canNext?'':'disabled'} onclick="${st<2?`setStage('${L.id}',${st+1})`:`go('${nextTo}')`}">${nextLabel}</button>
+      <button class="btn" ${canNext?'':'disabled'} onclick="${st<3?`setStage('${L.id}',${st+1})`:`go('${nextTo}')`}">${nextLabel}</button>
       <button class="btn v" onclick="go('home')">🗺 Map</button>
     </div>`;
-  if(st===1) initGame(L);
+  if(st===2) initGame(L);
+}
+/* stage 1: explanation */
+function explHTML(L){
+  if(!L.expl) return '';
+  return `<h2>📖 Let's learn</h2>`+L.expl.map(sec=>{
+    let inner='';
+    if(sec.items) inner=`<div class="words">${sec.items.map(it=>{
+        if(L.id==='l1' && sec.h.indexOf('Colours')>=0) return `<div class="word" onclick="speak('${it[0]}')"><span class="e" style="font-size:34px">${it[0]==='sky'?'☁️':it[0]==='sun'?'☀️':it[0]==='grass'?'🌿':it[0]==='flower'?'🌼':'🦋'}</span><b>${it[0]} = ${it[1]}</b></div>`;
+        if(L.id==='l3') return `<div class="word" onclick="speak('${it[0]}')"><span class="e" style="font-size:44px">${it[1]}</span><b>${it[0]}</b><small>${it[2]}</small></div>`;
+        if(L.id==='l4') return `<div class="word" onclick="speak('${it[0]}')"><span class="e">${it[1]}</span><b>${it[0]}</b><small>starts with "${it[2]}"</small></div>`;
+        return `<div class="word" onclick="speak('${it[0]}')"><span class="e">${it[1]}</span><b>${it[0]}</b><small>${it[2]}</small></div>`;
+      }).join('')}</div>`;
+    if(sec.letters) inner=`<div class="words">${sec.letters.map(([t,l])=>`<div class="word" onclick="speak('${l}')"><span class="e" style="font-size:56px;color:var(--violet)">${t}</span><b>tap to hear</b></div>`).join('')}</div>`;
+    if(sec.text) inner=`<div class="engl">${sec.text}</div>`;
+    if(sec.sents) inner=sec.sents.map(x=>`<div class="sent" onclick="speak(this.dataset.s)" data-s="${x.replace(/"/g,'&quot;')}"><span class="ltr">${x}</span><span class="say">🔊</span></div>`).join('');
+    return `<div class="card" style="margin:12px 0;background:#fff"><h3 style="font-family:'Chewy',cursive;font-weight:400;font-size:26px;color:var(--violet);margin:0 0 8px">${sec.h}</h3>${inner}</div>`;
+  }).join('') + `<p style="text-align:center;font-weight:800">Listen to the words, then press "Start playing" 🎮</p>`;
 }
 function setStage(id,s){ S.stage[id]=s; lesson(LESSONS.find(l=>l.id===id)); }
 
