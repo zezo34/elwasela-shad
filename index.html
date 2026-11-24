@@ -173,6 +173,15 @@ canvas.trace{position:absolute;inset:0;width:100%;height:100%;touch-action:none;
 .slot .shape.tr{border-left-width:clamp(26px,7vw,40px);border-right-width:clamp(26px,7vw,40px);border-bottom-width:clamp(44px,12vw,68px)}
 .dragging{pointer-events:none}
 
+/* letter sorting: responsive */
+.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,2.5vw,14px);max-width:520px;margin:0 auto}
+.bucket{position:relative!important;width:100%;height:clamp(90px,24vw,130px);border:4px solid var(--violet);border-radius:24px;background:#fff;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:8px;font-family:'Chewy',cursive;font-size:clamp(34px,9vw,52px);color:var(--violet)}
+.item{position:relative!important;width:clamp(84px,24vw,110px);height:clamp(84px,24vw,110px);background:#fff;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:clamp(34px,9vw,50px);cursor:grab;touch-action:none;user-select:none;box-shadow:0 6px 0 rgba(36,59,83,.15)}
+.item small{font-size:clamp(12px,3.2vw,15px);font-weight:700}
+.item.done{position:relative!important;opacity:.4;pointer-events:none;transform:scale(.85)}
+.bucket .item{width:clamp(70px,20vw,90px);height:clamp(70px,20vw,90px);opacity:.9}
+#wtray{display:flex;flex-wrap:wrap;gap:clamp(10px,3vw,18px);justify-content:center;margin-top:16px;min-height:clamp(90px,24vw,120px)}
+
 .menuGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:12px 0}
 .mcard{border:0;background:#fff;border-radius:26px;padding:16px 12px;cursor:pointer;font-family:inherit;color:var(--ink);box-shadow:0 7px 0 rgba(36,59,83,.14);transition:transform .15s}
 .mcard:hover{transform:translateY(-4px)}
@@ -534,23 +543,24 @@ function drag(el,onDrop){
 /* L4 */
 function l4(){
   CUR.l4={traced:false,sorted:0,strokes:0};
-  const cv=$('cv'); const arena=$('arena'); cv.width=arena.clientWidth; cv.height=arena.clientHeight;
+  const cv=$('cv'); const arena=$('arena');
+  cv.width=arena.clientWidth; cv.height=arena.clientHeight;
   const ctx=cv.getContext('2d'); ctx.lineWidth=16; ctx.lineCap='round'; ctx.strokeStyle='#8b5cf6';
   let drawing=false,last=null,pts=0;
   const pos=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; };
   cv.onpointerdown=e=>{ drawing=true; last=pos(e); };
   cv.onpointermove=e=>{ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last[0],last[1]); ctx.lineTo(p[0],p[1]); ctx.stroke(); last=p; pts++; if(pts>120 && !CUR.l4.traced){ CUR.l4.traced=true; good(); toast('Great tracing! ✏️'); } };
-  window.addEventListener('pointerup',()=>{ drawing=false; });
+  window.onpointerup=()=>{ drawing=false; };
   const words=[['🐜','ant','a'],['🍎','apple','a'],['☀️','sun','s'],['🐍','snake','s']];
   const sa=$('sortArena');
-  sa.innerHTML=`<div class="bucket" style="left:6%;top:10%" data-drop="a">A a</div><div class="bucket" style="right:6%;top:10%" data-drop="s">S s</div>`;
-  const pts2=[[38,18],[12,58],[44,62],[68,58]];
-  words.sort(()=>Math.random()-.5).forEach(([e,w,l],i)=>{
-    const el=document.createElement('div'); el.className='item'; el.dataset.key=l; el.innerHTML=`${e}<small style="font-size:14px;display:block">${w}</small>`;
-    el.style.left=(30+ (i%2)*25)+'%'; el.style.top=(40+Math.floor(i/2)*44)+'%'; sa.appendChild(el);
+  sa.innerHTML=`<div class="bgrid"><div class="bucket" data-drop="a">A a</div><div class="bucket" data-drop="s">S s</div></div><div class="tray" id="wtray"></div>`;
+  const tray=$('wtray');
+  words.sort(()=>Math.random()-.5).forEach(([e,w,l])=>{
+    const el=document.createElement('div'); el.className='item'; el.dataset.key=l;
+    el.innerHTML=`<span>${e}</span><small>${w}</small>`; tray.appendChild(el);
     drag(el,(el2,t)=>{
-      if(t && t.dataset.drop===el2.dataset.key){ el2.classList.add('done'); el2.style.position='static'; el2.style.display='inline-grid'; el2.style.margin='6px'; t.appendChild(el2); good(); speak(w); CUR.l4.sorted++;
-        if(CUR.l4.sorted===words.length && CUR.l4.traced){ S.gameDone.l4=true; addStar(1); sticker('l4','🔤'); toast('Letters mastered! 🎉'); confetti(); setTimeout(()=>lesson(LESSONS[3]),900);} 
+      if(t && t.dataset.drop===el2.dataset.key){ el2.classList.add('done'); t.appendChild(el2); good(); speak(w); CUR.l4.sorted++;
+        if(CUR.l4.sorted===words.length && CUR.l4.traced){ S.gameDone.l4=true; addStar(1); sticker('l4','🔤'); toast('Letters mastered! 🎉'); confetti(); setTimeout(()=>lesson(LESSONS[3]),900);}
         else if(CUR.l4.sorted===words.length){ toast('Now trace the big letter ✏️'); } }
       else { el2.classList.remove('shake'); void el2.offsetWidth; el2.classList.add('shake'); bad(); }
     });
